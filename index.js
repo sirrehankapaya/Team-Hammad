@@ -22,16 +22,22 @@ dotenv.config()
 const app = express()
 ConnectDB()
 
+const envOrigins = (process.env.FRONTEND_URL || process.env.CLIENT_URL || '')
+    .split(',')
+    .map(url => url.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
     'https://ssm-system-dxih.vercel.app',
-    'https://ssms-frontend-pearl.vercel.app'
+    'https://ssms-frontend-pearl.vercel.app',
+    ...envOrigins
 ];
 
 app.use(cors({
     origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
