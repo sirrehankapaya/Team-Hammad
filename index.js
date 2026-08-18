@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const dotenv = require('dotenv')
 const path = require('path')
+const mongoose = require('mongoose')
 const ConnectDB = require('./config/db')
 
 const UserRoutes = require('./routes/UserRoutes')
@@ -55,9 +56,11 @@ app.use(async (req, res, next) => {
 });
 
 app.get("/", (req, res) => {
+    const isDbConnected = mongoose.connection.readyState === 1;
     res.status(200).json({
         success: true,
         message: "SmartSociety Backend API is running...",
+        database: isDbConnected ? "Connected" : "Disconnected",
         version: "1.0.0"
     });
 });
